@@ -6,6 +6,7 @@ import 'package:sandwich_shop/models/sandwich.dart';
 import 'package:sandwich_shop/views/profile_screen.dart';
 import 'package:provider/provider.dart';
 import 'package:sandwich_shop/views/settings_screen.dart';
+import 'package:sandwich_shop/views/checkout_screen.dart';
 
 class OrderScreen extends StatefulWidget {
   final int maxQuantity;
@@ -119,7 +120,10 @@ class _OrderScreenState extends State<OrderScreen> {
     Navigator.push(
       context,
       MaterialPageRoute<void>(
-        builder: (BuildContext context) => const CartScreen(),
+        builder: (BuildContext context) {
+          final cart = Provider.of<Cart>(context, listen: false);
+          return CartScreen(cart: cart);
+        },
       ),
     );
   }
@@ -177,16 +181,33 @@ class _OrderScreenState extends State<OrderScreen> {
         actions: [
           Consumer<Cart>(
             builder: (context, cart, child) {
-              return Padding(
-                padding: const EdgeInsets.all(8.0),
-                child: Row(
-                  mainAxisSize: MainAxisSize.min,
+              return IconButton(
+                icon: Stack(
                   children: [
                     const Icon(Icons.shopping_cart),
-                    const SizedBox(width: 4),
-                    Text('${cart.countOfItems}'),
+                    if (cart.items.isNotEmpty)
+                      Positioned(
+                        right: 0,
+                        child: CircleAvatar(
+                          radius: 8,
+                          backgroundColor: Colors.red,
+                          child: Text(
+                            '${cart.items.values.fold<int>(0, (sum, qty) => sum + qty)}',
+                            style: const TextStyle(
+                                fontSize: 12, color: Colors.white),
+                          ),
+                        ),
+                      ),
                   ],
                 ),
+                onPressed: () {
+                  Navigator.push(
+                    context,
+                    MaterialPageRoute(
+                      builder: (context) => CheckoutScreen(cart: cart),
+                    ),
+                  );
+                },
               );
             },
           ),

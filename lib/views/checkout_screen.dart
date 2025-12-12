@@ -6,7 +6,9 @@ import 'package:sandwich_shop/models/sandwich.dart';
 import 'package:sandwich_shop/repositories/pricing_repository.dart';
 
 class CheckoutScreen extends StatefulWidget {
-  const CheckoutScreen({super.key});
+  final Cart cart;
+
+  const CheckoutScreen({super.key, required this.cart});
 
   @override
   State<CheckoutScreen> createState() => _CheckoutScreenState();
@@ -26,7 +28,7 @@ class _CheckoutScreenState extends State<CheckoutScreen> {
     final int timestamp = currentTime.millisecondsSinceEpoch;
     final String orderId = 'ORD$timestamp';
 
-    final Cart cart = Provider.of<Cart>(context, listen: false);
+    final Cart cart = widget.cart;
     final Map orderConfirmation = {
       'orderId': orderId,
       'totalAmount': cart.totalPrice,
@@ -56,7 +58,7 @@ class _CheckoutScreenState extends State<CheckoutScreen> {
             child: Image.asset('assets/images/logo.png'),
           ),
         ),
-        title:  Text('Checkout', style: heading1),
+        title: Text('Checkout', style: heading1),
         actions: [
           Consumer<Cart>(
             builder: (context, cart, child) {
@@ -81,7 +83,7 @@ class _CheckoutScreenState extends State<CheckoutScreen> {
           builder: (context, cart, child) {
             List<Widget> columnChildren = [];
 
-            columnChildren.add( Text('Order Summary', style: heading2));
+            columnChildren.add(Text('Order Summary', style: heading2));
             columnChildren.add(const SizedBox(height: 20));
 
             for (MapEntry<Sandwich, int> entry in cart.items.entries) {
@@ -113,7 +115,7 @@ class _CheckoutScreenState extends State<CheckoutScreen> {
             final Widget totalRow = Row(
               mainAxisAlignment: MainAxisAlignment.spaceBetween,
               children: [
-                 Text('Total:', style: heading2),
+                Text('Total:', style: heading2),
                 Text(
                   '£${cart.totalPrice.toStringAsFixed(2)}',
                   style: heading2,
@@ -124,7 +126,7 @@ class _CheckoutScreenState extends State<CheckoutScreen> {
             columnChildren.add(const SizedBox(height: 40));
 
             columnChildren.add(
-               Text(
+              Text(
                 'Payment Method: Card ending in 1234',
                 style: normalText,
                 textAlign: TextAlign.center,
@@ -140,7 +142,7 @@ class _CheckoutScreenState extends State<CheckoutScreen> {
               );
               columnChildren.add(const SizedBox(height: 20));
               columnChildren.add(
-                 Text(
+                Text(
                   'Processing payment...',
                   style: normalText,
                   textAlign: TextAlign.center,
@@ -150,7 +152,7 @@ class _CheckoutScreenState extends State<CheckoutScreen> {
               columnChildren.add(
                 ElevatedButton(
                   onPressed: _processPayment,
-                  child:  Text('Confirm Payment', style: normalText),
+                  child: Text('Confirm Payment', style: normalText),
                 ),
               );
             }
