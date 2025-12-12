@@ -7,6 +7,7 @@ import 'package:sandwich_shop/views/profile_screen.dart';
 import 'package:provider/provider.dart';
 import 'package:sandwich_shop/views/settings_screen.dart';
 import 'package:sandwich_shop/views/checkout_screen.dart';
+import 'package:sandwich_shop/views/common_widgets.dart';
 
 class OrderScreen extends StatefulWidget {
   final int maxQuantity;
@@ -166,53 +167,7 @@ class _OrderScreenState extends State<OrderScreen> {
   @override
   Widget build(BuildContext context) {
     return Scaffold(
-      appBar: AppBar(
-        leading: Padding(
-          padding: const EdgeInsets.all(8.0),
-          child: SizedBox(
-            height: 100,
-            child: Image.asset('assets/images/logo.png'),
-          ),
-        ),
-        title: Text(
-          'Sandwich Counter',
-          style: heading1,
-        ),
-        actions: [
-          Consumer<Cart>(
-            builder: (context, cart, child) {
-              return IconButton(
-                icon: Stack(
-                  children: [
-                    const Icon(Icons.shopping_cart),
-                    if (cart.items.isNotEmpty)
-                      Positioned(
-                        right: 0,
-                        child: CircleAvatar(
-                          radius: 8,
-                          backgroundColor: Colors.red,
-                          child: Text(
-                            '${cart.items.values.fold<int>(0, (sum, qty) => sum + qty)}',
-                            style: const TextStyle(
-                                fontSize: 12, color: Colors.white),
-                          ),
-                        ),
-                      ),
-                  ],
-                ),
-                onPressed: () {
-                  Navigator.push(
-                    context,
-                    MaterialPageRoute(
-                      builder: (context) => CheckoutScreen(cart: cart),
-                    ),
-                  );
-                },
-              );
-            },
-          ),
-        ],
-      ),
+      appBar: const CommonAppBar(title: 'Sandwich Counter'),
       body: Center(
         child: SingleChildScrollView(
           child: Column(

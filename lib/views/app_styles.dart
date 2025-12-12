@@ -4,6 +4,10 @@ import 'package:shared_preferences/shared_preferences.dart';
 class AppStyles {
   static double _baseFontSize = 16.0;
 
+  static const Color primaryColor = Colors.green;
+  static const Color accentColor = Colors.orange;
+  static const EdgeInsets defaultPadding = EdgeInsets.all(16.0);
+
   static Future<void> loadFontSize() async {
     final SharedPreferences prefs = await SharedPreferences.getInstance();
     _baseFontSize = prefs.getDouble('fontSize') ?? 16.0;
