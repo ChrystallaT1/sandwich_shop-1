@@ -1,76 +1,165 @@
-# Sandwich Shop
+# 🥪 Sandwich Shop – Flutter Application
 
-This is a simple Flutter app that allows users to order sandwiches.
-The app is built using Flutter and Dart, and it is designed primarily to be run in a web
-browser.
+A modern, multi-screen Flutter app for building custom sandwiches, managing a shopping cart, and completing orders. The app demonstrates best practices in state management, reusable UI components, navigation, persistent storage, and automated testing.
 
-## Install the essential tools
+---
 
-1. **Terminal**:
+## ✨ Features
 
-    - **macOS** – use the built-in Terminal app by pressing **⌘ + Space**, typing **Terminal**, and pressing **Return**.
-    - **Windows** – open the start menu using the **Windows** key. Then enter **cmd** to open the **Command Prompt**. Alternatively, you can use **Windows PowerShell** or **Windows Terminal**.
+- **Custom Sandwich Builder:** Choose sandwich type, bread, and size; adjust quantity; see real-time price updates.
+- **Shopping Cart:** Add, remove, and update items; persistent cart indicator; view cart summary.
+- **Checkout:** Review your order and confirm payment.
+- **Profile Management:** Enter and save user details.
+- **Settings:** Adjust app font size and preferences.
+- **Consistent UI:** Shared app bar and cart indicator across all screens.
+- **Robust Navigation:** Seamless transitions between all app sections.
+- **Automated Testing:** Comprehensive unit, widget, and integration tests.
 
-2. **Git** – verify that you have `git` installed by entering `git --version`, in the terminal.
-    If this is missing, download the installer from [Git's official site](https://git-scm.com/downloads?utm_source=chatgpt.com).
+---
 
-3. **Package managers**:
+## 🖥️ Screens
 
-    - **Homebrew** (macOS) – verify that you have `brew` installed with `brew --version`; if missing, follow the instructions on the [Homebrew installation page](https://brew.sh/).
-    - **Chocolatey** (Windows) – verify that you have `choco` installed with `choco --version`; if missing, follow the instructions on the [Chocolatey installation page](https://chocolatey.org/install).
+### 🏠 Order Screen
 
-4. **Flutter SDK** – verify that you have `flutter` installed and it is working with `flutter doctor`; if missing, install it using your package manager:
+- Build your sandwich by selecting type, bread, size, and quantity.
+- Add sandwiches to your cart.
+- Navigate to Cart, Profile, or Settings.
 
-    - **macOS**: `brew install --cask flutter`
-    - **Windows**: `choco install flutter`
+### 🛒 Cart Screen
 
-5. **Visual Studio Code** – verify that you have `code` installed with `code --version`; if missing, use your package manager to install it:
+- View all items in your cart.
+- Adjust quantities or remove items.
+- Proceed to Checkout.
 
-    - **macOS**: `brew install --cask visual-studio-code`
-    - **Windows**: `choco install vscode`
+### 💳 Checkout Screen
 
-## Get the code
+- Review your order summary.
+- Confirm and process payment.
 
-### If this is your first time working on this project
+### 👤 Profile Screen
 
-Enter the following commands in your terminal to clone the repository and
-open it in Visual Studio Code.
-You may want to change directory (`cd`) to the directory where you want to clone the
-repository first.
+- Enter and save your name and preferred location.
 
-```bash
-git clone --branch 7 https://github.com/manighahrmani/sandwich_shop
-cd sandwich_shop
-code .
+### ⚙️ Settings Screen
+
+- Adjust the app’s font size for accessibility.
+
+---
+
+## 📁 Project Structure
+
+```
+lib/
+  models/                # Data models (Cart, Sandwich, etc.)
+  repositories/          # Business logic (e.g., pricing)
+  views/                 # UI screens and shared widgets
+    common_widgets.dart  # Shared AppBar, cart icon, styled buttons
+    order_screen.dart
+    cart_screen.dart
+    checkout_screen.dart
+    profile_screen.dart
+    settings_screen.dart
+    app_styles.dart      # Centralized styles and theming
+  main.dart              # App entry point
+
+test/
+  models/                # Model unit tests
+  repositories/          # Repository unit tests
+  views/                 # Widget tests for each screen
+  widget_test.dart       # General widget tests
+
+integration_test/
+  app_test.dart          # End-to-end integration tests
 ```
 
-### If you have already cloned the repository
+---
 
-Enter the following commands in your terminal to switch to the correct branch.
-Remember to `cd` to the directory where you cloned the repository first.
+## 🚀 Installation & Setup
 
-```bash
-git fetch origin
-git checkout 7
+1. **Clone the repository:**
+
+   ```sh
+   git clone <your-repo-url>
+   cd sandwich_shop
+   ```
+
+2. **Install dependencies:**
+
+   ```sh
+   flutter pub get
+   ```
+
+3. **Run the app on an emulator or device:**
+
+   ```sh
+   flutter run
+   ```
+
+4. **Run on Chrome (web debug):**
+   ```sh
+   flutter run -d chrome
+   ```
+
+---
+
+## 🧪 Testing
+
+- **Unit Tests:** Validate business logic and models.
+- **Widget Tests:** Verify UI components and screen behavior.
+- **Integration Tests:** Simulate real user flows across multiple screens.
+
+**Run all tests:**
+
+```sh
+flutter test
 ```
 
-## Run the app
+**Run integration tests (requires emulator/device):**
 
-Open the integrated terminal in Visual Studio Code by first opening the Command
-Palette with **⌘ + Shift + P** (macOS) or **Ctrl + Shift + P** (Windows) and
-typing **Terminal: Create New Terminal** then pressing **Enter**.
-
-In the terminal, run the following commands to install the dependencies and run
-the app in your web browser:
-
-```bash
-flutter pub get
-flutter run
+```sh
+flutter test integration_test/
 ```
 
-## Get support
+---
 
-Use [the dedicated Discord channel](https://discord.com/channels/760155974467059762/1370633732779933806)
-to ask your questions and get help from the community.
-Please provide as much context as possible, including the error messages you are seeing and
-screenshots (you can open Discord in your web browser).
+## 📦 Release Build
+
+**Build Android APK:**
+
+```sh
+flutter build apk --release
+```
+
+_Output:_ `build/app/outputs/flutter-apk/app-release.apk`
+
+**Build Web Release:**
+
+```sh
+flutter build web --release
+```
+
+_Output:_ `build/web/`
+
+---
+
+## 📦 Dependencies
+
+| Package            | Purpose                  |
+| ------------------ | ------------------------ |
+| provider           | State management         |
+| shared_preferences | Local persistent storage |
+| flutter_test       | Unit and widget testing  |
+| integration_test   | End-to-end UI testing    |
+
+---
+
+## ⚖️ Debug vs Release Comparison
+
+| Category      | Debug Mode                        | Release Mode            |
+| ------------- | --------------------------------- | ----------------------- |
+| Startup Speed | Slower (hot reload, extra checks) | Faster, optimized       |
+| Performance   | Lower (DevTools, assertions)      | High, smooth animations |
+| Build Size    | Larger (debug symbols)            | Smaller, minified       |
+| Purpose       | Development and testing           | Distribution to users   |
+
+---
