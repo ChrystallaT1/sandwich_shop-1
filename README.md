@@ -140,6 +140,15 @@ flutter build web --release
 
 _Output:_ `build/web/`
 
+### Debug vs Release Comparison
+
+| Category     | Debug Build                            | Release Build                         |
+| ------------ | -------------------------------------- | ------------------------------------- |
+| Size         | 174 MB                                 | 80.7 MB                               |
+| Performance  | Slower startup, more overhead          | Faster startup, optimized             |
+| Debugging    | Hot reload, debug banner, extra checks | No debug banner, production optimized |
+| Intended use | Development/testing                    | Distribution to users                 |
+
 ---
 
 ## 📦 Dependencies
