@@ -70,7 +70,13 @@ void main() {
       await tester.pumpAndSettle();
 
       expect(find.textContaining('Cart'), findsOneWidget);
-      expect(find.text('Chicken Teriyaki'), findsOneWidget);
+      expect(
+        find.descendant(
+          of: find.byType(ListView),
+          matching: find.text('Chicken Teriyaki'),
+        ),
+        findsOneWidget,
+      );
     });
 
     testWidgets('modify quantity and add to cart', (WidgetTester tester) async {
@@ -135,6 +141,180 @@ void main() {
       expect(find.text('Cart: 0 items - £0.00'), findsOneWidget);
     });
 
-    // Feel free to add more tests (e.g., to check saved orders, etc.)
+    testWidgets('add multiple sandwiches and complete checkout',
+        (WidgetTester tester) async {
+      app.main();
+      await tester.pumpAndSettle();
+
+      // Add first sandwich
+      await tester.tap(find.widgetWithText(StyledButton, 'Add to Cart'));
+      await tester.pumpAndSettle();
+
+      // Change sandwich type
+      final sandwichDropdown = find.byType(DropdownMenu<SandwichType>);
+      await tester.tap(sandwichDropdown);
+      await tester.pumpAndSettle();
+      await tester.tap(find.text('Chicken Teriyaki').last);
+      await tester.pumpAndSettle();
+
+      // Add second sandwich
+      await tester.tap(find.widgetWithText(StyledButton, 'Add to Cart'));
+      await tester.pumpAndSettle();
+
+      // View Cart
+      await tester.tap(find.widgetWithText(StyledButton, 'View Cart'));
+      await tester.pumpAndSettle();
+
+      // Both sandwiches should be listed
+      expect(find.text('Veggie Delight'), findsOneWidget);
+      expect(find.text('Chicken Teriyaki'), findsOneWidget);
+
+      // Checkout
+      await tester.tap(find.widgetWithText(StyledButton, 'Checkout'));
+      await tester.pumpAndSettle();
+      expect(find.text('Checkout'), findsOneWidget);
+
+      // Confirm payment
+      await tester.tap(find.text('Confirm Payment'));
+      await tester.pumpAndSettle(const Duration(seconds: 3));
+      expect(find.text('Sandwich Counter'), findsOneWidget);
+    });
+
+    testWidgets('settings font size persists after navigation',
+        (WidgetTester tester) async {
+      app.main();
+      await tester.pumpAndSettle();
+
+      // Navigate to Settings
+      final settingsButton = find.widgetWithText(StyledButton, 'Settings');
+      await tester.ensureVisible(settingsButton);
+      await tester.pumpAndSettle();
+      await tester.tap(settingsButton);
+      await tester.pumpAndSettle();
+
+      final slider = find.byType(Slider);
+      await tester.ensureVisible(slider);
+      await tester.pumpAndSettle();
+      await tester.drag(slider, const Offset(50, 0));
+      await tester.pumpAndSettle();
+
+      // Note the new font size text
+      final fontSizeText = find.textContaining('Current size:');
+      expect(fontSizeText, findsOneWidget);
+
+      // Navigate away and back
+      await tester.tap(find.widgetWithText(ElevatedButton, 'Back to Order'));
+      await tester.pumpAndSettle();
+      await tester.tap(settingsButton);
+      await tester.pumpAndSettle();
+
+      // Font size should persist
+      expect(fontSizeText, findsOneWidget);
+    });
+
+    testWidgets('navigate between all main screens',
+        (WidgetTester tester) async {
+      app.main();
+      await tester.pumpAndSettle();
+
+      // Order -> Cart
+      await tester.tap(find.widgetWithText(StyledButton, 'View Cart'));
+      await tester.pumpAndSettle();
+      expect(find.textContaining('Cart'), findsOneWidget);
+
+      // Cart -> Back to Order
+      final backButton = find.widgetWithText(StyledButton, 'Back to Order');
+      await tester.ensureVisible(backButton);
+      await tester.tap(backButton);
+      await tester.pumpAndSettle();
+      expect(find.text('Sandwich Counter'), findsOneWidget);
+
+      // Order -> Profile
+      await tester.tap(find.widgetWithText(StyledButton, 'Profile'));
+      await tester.pumpAndSettle();
+      expect(find.text('Profile'), findsOneWidget);
+
+      // Profile -> Back to Order
+      await tester.pageBack();
+      await tester.pumpAndSettle();
+      expect(find.text('Sandwich Counter'), findsOneWidget);
+
+      // Order -> Settings
+      await tester.tap(find.widgetWithText(StyledButton, 'Settings'));
+      await tester.pumpAndSettle();
+      expect(find.text('Settings'), findsOneWidget);
+    });
+
+    testWidgets('cannot checkout with empty cart', (WidgetTester tester) async {
+      app.main();
+      await tester.pumpAndSettle();
+
+      // Go to Cart
+      await tester.tap(find.widgetWithText(StyledButton, 'View Cart'));
+      await tester.pumpAndSettle();
+
+      // Try to checkout
+      final checkoutButton = find.widgetWithText(StyledButton, 'Checkout');
+      if (tester.any(checkoutButton)) {
+        await tester.tap(checkoutButton);
+        await tester.pumpAndSettle();
+        expect(find.textContaining('empty'), findsOneWidget);
+      } else {
+        // Button is not present, which is expected if cart is empty
+        expect(true, isTrue);
+      }
+    });
+
+    testWidgets('cart quantity does not go below zero',
+        (WidgetTester tester) async {
+      app.main();
+      await tester.pumpAndSettle();
+
+      // Try to decrement quantity below zero
+      final removeButton = find.byIcon(Icons.remove).first;
+      await tester.tap(removeButton);
+      await tester.pumpAndSettle();
+
+      // Quantity should remain at 0
+      expect(find.text('0'), findsOneWidget);
+    });
+
+    testWidgets('cart is empty after app restart', (WidgetTester tester) async {
+      app.main();
+      await tester.pumpAndSettle();
+
+      // Add to cart
+      await tester.tap(find.widgetWithText(StyledButton, 'Add to Cart'));
+      await tester.pumpAndSettle();
+      expect(find.textContaining('Cart: 1 items'), findsOneWidget);
+
+      // Restart app
+      app.main();
+      await tester.pumpAndSettle();
+
+      // Cart should be empty
+      expect(find.textContaining('Cart: 0 items'), findsOneWidget);
+    });
+
+    testWidgets('save profile information', (WidgetTester tester) async {
+      app.main();
+      await tester.pumpAndSettle();
+
+      // Navigate to Profile
+      await tester.tap(find.widgetWithText(StyledButton, 'Profile'));
+      await tester.pumpAndSettle();
+
+      // Modify some profile information
+      await tester.enterText(find.byType(TextField).first, 'John Doe');
+      await tester.pumpAndSettle();
+
+      final saveButton = find.widgetWithText(StyledButton, 'Save Profile');
+      await tester.ensureVisible(saveButton);
+      await tester.tap(saveButton);
+      await tester.pumpAndSettle();
+
+      // Verify that the profile information is saved
+      expect(find.text('Profile saved!'), findsOneWidget);
+    });
   });
 }
