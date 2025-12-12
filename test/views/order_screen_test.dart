@@ -269,6 +269,45 @@ void main() {
     });
   });
 
+  group('OrderScreen - Cart Indicator', () {
+    //  Cart indicator is displayed in the AppBar
+    testWidgets('displays cart indicator in AppBar',
+        (WidgetTester tester) async {
+      const OrderScreen orderScreen = OrderScreen();
+      const MaterialApp app = MaterialApp(home: orderScreen);
+      await tester.pumpWidget(app);
+
+      expect(find.byIcon(Icons.shopping_cart), findsOneWidget);
+    });
+
+    // Cart indicator shows zero items initially
+    testWidgets('cart indicator shows zero items initially',
+        (WidgetTester tester) async {
+      const OrderScreen orderScreen = OrderScreen();
+      const MaterialApp app = MaterialApp(home: orderScreen);
+      await tester.pumpWidget(app);
+
+      expect(find.text('0'), findsOneWidget);
+    });
+
+    //  Cart indicator updates when items are added
+    testWidgets('cart indicator updates when items are added',
+        (WidgetTester tester) async {
+      const OrderScreen orderScreen = OrderScreen();
+      const MaterialApp app = MaterialApp(home: orderScreen);
+      await tester.pumpWidget(app);
+
+      final Finder addToCartButtonFinder =
+          find.widgetWithText(StyledButton, 'Add to Cart');
+      await tester.ensureVisible(addToCartButtonFinder);
+      await tester.pumpAndSettle();
+      await tester.tap(addToCartButtonFinder);
+      await tester.pumpAndSettle();
+
+      expect(find.text('1'), findsOneWidget);
+    });
+  });
+
   group('StyledButton', () {
     testWidgets('renders correctly with icon and label when enabled',
         (WidgetTester tester) async {

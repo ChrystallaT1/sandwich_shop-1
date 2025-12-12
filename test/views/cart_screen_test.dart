@@ -193,5 +193,54 @@ void main() {
           tester.widget<StyledButton>(backButtonFinder);
       expect(backButton.onPressed, isNotNull);
     });
+
+    // Verify cart indicator is displayed in AppBar
+    testWidgets('displays cart indicator in AppBar',
+        (WidgetTester tester) async {
+      final Cart cart = Cart();
+      final CartScreen cartViewScreen = CartScreen(cart: cart);
+      final MaterialApp app = MaterialApp(home: cartViewScreen);
+
+      await tester.pumpWidget(app);
+
+      expect(find.byIcon(Icons.shopping_cart), findsOneWidget);
+    });
+
+    // Verify cart indicator shows zero for empty cart
+    testWidgets('cart indicator shows zero for empty cart',
+        (WidgetTester tester) async {
+      final Cart cart = Cart();
+      final CartScreen cartViewScreen = CartScreen(cart: cart);
+      final MaterialApp app = MaterialApp(home: cartViewScreen);
+
+      await tester.pumpWidget(app);
+
+      expect(find.text('0'), findsOneWidget);
+    });
+
+    //  Verify cart indicator displays correct item count
+    testWidgets('cart indicator displays correct item count',
+        (WidgetTester tester) async {
+      final Cart cart = Cart();
+      final Sandwich sandwich1 = Sandwich(
+        type: SandwichType.veggieDelight,
+        isFootlong: true,
+        breadType: BreadType.white,
+      );
+      final Sandwich sandwich2 = Sandwich(
+        type: SandwichType.chickenTeriyaki,
+        isFootlong: false,
+        breadType: BreadType.wheat,
+      );
+      cart.add(sandwich1, quantity: 2);
+      cart.add(sandwich2, quantity: 3);
+
+      final CartScreen cartViewScreen = CartScreen(cart: cart);
+      final MaterialApp app = MaterialApp(home: cartViewScreen);
+
+      await tester.pumpWidget(app);
+
+      expect(find.text('5'), findsOneWidget);
+    });
   });
 }

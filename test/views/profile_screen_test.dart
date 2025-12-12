@@ -1,6 +1,9 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_test/flutter_test.dart';
+import 'package:provider/provider.dart';
 import 'package:sandwich_shop/views/profile_screen.dart';
+import 'package:sandwich_shop/models/cart.dart';
+import 'package:sandwich_shop/models/sandwich.dart';
 
 void main() {
   group('ProfileScreen', () {
@@ -320,6 +323,67 @@ void main() {
       await tester.pumpAndSettle();
 
       expect(find.text('Please fill in all fields'), findsOneWidget);
+    });
+    // Verify the cart indicator is displayed in the AppBar
+
+    testWidgets('displays cart indicator in AppBar',
+        (WidgetTester tester) async {
+      final Cart cart = Cart();
+      const ProfileScreen profileScreen = ProfileScreen();
+      final MaterialApp app = MaterialApp(
+        home: ChangeNotifierProvider<Cart>.value(
+          value: cart,
+          child: profileScreen,
+        ),
+      );
+
+      await tester.pumpWidget(app);
+
+      expect(find.byIcon(Icons.shopping_cart), findsOneWidget);
+      expect(find.text('0'), findsOneWidget);
+    });
+
+    //  Verify cart indicator shows correct initial count
+    testWidgets('cart indicator shows zero items initially',
+        (WidgetTester tester) async {
+      final Cart cart = Cart();
+      const ProfileScreen profileScreen = ProfileScreen();
+      final MaterialApp app = MaterialApp(
+        home: ChangeNotifierProvider<Cart>.value(
+          value: cart,
+          child: profileScreen,
+        ),
+      );
+
+      await tester.pumpWidget(app);
+
+      expect(find.text('0'), findsOneWidget);
+    });
+
+    //  Verify cart indicator updates when items added to cart
+    testWidgets('cart indicator updates when items are added',
+        (WidgetTester tester) async {
+      final Cart cart = Cart();
+      const ProfileScreen profileScreen = ProfileScreen();
+      final MaterialApp app = MaterialApp(
+        home: ChangeNotifierProvider<Cart>.value(
+          value: cart,
+          child: profileScreen,
+        ),
+      );
+
+      await tester.pumpWidget(app);
+
+      // Add items to cart
+      final sandwich = Sandwich(
+        type: SandwichType.veggieDelight,
+        isFootlong: true,
+        breadType: BreadType.white,
+      );
+      cart.add(sandwich, quantity: 3);
+      await tester.pump();
+
+      expect(find.text('3'), findsOneWidget);
     });
   });
 }
